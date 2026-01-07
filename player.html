@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>JWPlayer ClearKey Player</title>
+
+<!-- JWPlayer -->
+<script src="//ssl.p.jwpcdn.com/player/v/8.36.0/jwplayer.js"></script>
+<script>
+  jwplayer.key = "XSuP4qMl+9tK17QNb+4+th2Pm9AWgMO/cYH8CI0HGGr7bdjo";
+</script>
+
+<style>
+  body{
+    margin:0;
+    background:#0f172a;
+    color:#e5e7eb;
+    font-family:Arial, Helvetica, sans-serif;
+  }
+
+  .container{
+    max-width:900px;
+    margin:30px auto;
+    padding:20px;
+  }
+
+  h1{
+    text-align:center;
+    margin-bottom:20px;
+  }
+
+  .card{
+    background:#111827;
+    padding:20px;
+    border-radius:14px;
+    box-shadow:0 10px 30px rgba(0,0,0,.4);
+  }
+
+  label{
+    font-size:14px;
+    opacity:.8;
+  }
+
+  input{
+    width:100%;
+    padding:12px;
+    margin:8px 0 18px 0;
+    border-radius:6px;
+    border:none;
+    background:#020617;
+    color:#e5e7eb;
+  }
+
+  button{
+    width:100%;
+    padding:14px;
+    background:#2563eb;
+    border:none;
+    border-radius:10px;
+    color:white;
+    font-size:16px;
+    cursor:pointer;
+  }
+
+  button:hover{
+    background:#1d4ed8;
+  }
+
+  #player{
+    margin-top:25px;
+    border-radius:14px;
+    overflow:hidden;
+  }
+</style>
+</head>
+
+<body>
+<div class="container">
+
+  <h1>JWPlayer — DASH ClearKey Player</h1>
+
+  <div class="card">
+    <label>MPD Stream URL</label>
+    <input id="mpd" />
+
+    <label>ClearKey</label>
+    <input id="clearkey" />
+
+    <button onclick="loadPlayer()">Play Stream</button>
+  </div>
+
+  <div id="player"></div>
+</div>
+
+<script>
+function loadPlayer(){
+
+  const mpd = document.getElementById("mpd").value.trim();
+  const clearkey = document.getElementById("clearkey").value.trim();
+
+  if(!mpd || !clearkey || !clearkey.includes(":")){
+    alert("Please enter a valid MPD URL and ClearKey in format keyid:key");
+    return;
+  }
+
+  const [keyId, key] = clearkey.split(":");
+
+  const player = jwplayer("player").setup({
+    playlist:[{
+      sources:[{
+        file: mpd,
+        type: "dash",
+        drm:{
+          clearkey:{
+            keyId: keyId.trim(),
+            key: key.trim()
+          }
+        }
+      }]
+    }],
+    width: "100%",
+    aspectratio: "16:9",
+    autostart: true,
+    mute: false
+  });
+
+  player.on("ready", () => player.setVolume(100));
+}
+</script>
+
+</body>
+</html>
